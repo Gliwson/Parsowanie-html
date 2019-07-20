@@ -1,6 +1,5 @@
 package pl.test.downloaderHtml;
 
-import org.jsoup.Connection;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -12,8 +11,6 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
 
 public class Downloader {
     private List<String> lista = new ArrayList<>();
@@ -62,16 +59,9 @@ public class Downloader {
         return lista;
     }
 
-    public void tekstOpisu(String input) throws IOException, InterruptedException,HttpStatusException {
+    public List<String> tekstOpisu(String input) throws IOException, InterruptedException, HttpStatusException {
         URL url = new URL(input);
-
-        try {
-            parse = Jsoup.parse(url, 3000); //problem
-        }catch (HttpStatusException exception){
-        tekstOpisu(input);
-        return;
-        }
-
+        load(url);
         //TimeUnit.SECONDS.sleep(1);
         Elements h2Elements = parse.select("p.text");
         //TimeUnit.SECONDS.sleep(1);
@@ -81,26 +71,32 @@ public class Downloader {
             //lista2.add(h2text);
             String h2text = h2.text();
             String hrefText = h2.select("a").first().attr("href");
-            System.out.println(h2text+":::" + hrefText);
+            System.out.println(h2text + ":::" + hrefText);
+            lista2.add(h2text + ":::" + hrefText);
             System.out.println();
+        }
+        return lista2;
+    }
+
+    private void load(URL url) throws IOException, InterruptedException {
+        try {
+            parse = Jsoup.parse(url, 3000); //problem
+        } catch (HttpStatusException exception) {
+            load(url);
         }
     }
 
     public void wyciaghref() throws IOException, InterruptedException {
         URL url = new URL("https://www.wykop.pl/");
-        try {
-            parse = Jsoup.parse(url, 3000); //problem
-        }catch (HttpStatusException | SocketTimeoutException exception){
-            parse = Jsoup.parse(url, 3000); //problem
-        }
-        Elements h2Elements = parse.select("h2").attr("a","href");
+        load(url);
+        Elements h2Elements = parse.select("h2").attr("a", "href");
         //h2Elements.stream().forEach(s-> System.out.println(s));
         for (Element h2 : h2Elements) {
             String h2text = h2.select("a").first().attr("href");
             listHref.add(h2text);
             System.out.println(h2text);
         }
-        for (String element: listHref){
+        for (String element : listHref) {
 
             tekstOpisu(element);
         }

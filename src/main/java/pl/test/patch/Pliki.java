@@ -41,7 +41,7 @@ public class Pliki {
 
     public void nextFiles() throws IOException {
         number++;
-        String sciezkaNext = "src/sda" + number +".docx";
+        String sciezkaNext = "src/sda" + number +".txt";
         files(sciezkaNext);
     }
 }

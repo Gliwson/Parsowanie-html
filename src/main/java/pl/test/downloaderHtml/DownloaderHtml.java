@@ -11,29 +11,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Downloader {
+public class DownloaderHtml {
     private List<String> lista = new ArrayList<>();
     private List<String> listHref = new ArrayList<>();
     private Document parse;
     public List<String> lista2 = new ArrayList<>();
-
-    public List<String> tekst(String tekst) throws IOException {
-        URL url = new URL(tekst);
-        Document parse = Jsoup.parse(url, 3000);
-        Elements h2Elements = parse.select("p").attr("class", "backtoblog");
-        String h3text = parse.select("h3").text();
-        lista.add(h3text);
-        System.out.println(h3text);
-        for (Element h2 : h2Elements) {
-            if (h2.text().equalsIgnoreCase("© 2019 WuxiaWorld. All rights reserved")) {
-                return lista;
-            }
-            String h2text = h2.text();
-            lista.add(h2text);
-            System.out.println(h2text);
-        }
-        return lista;
-    }
 
     public List<String> tekst(String tekst, String select) throws IOException {
         URL url = new URL(tekst);
@@ -46,19 +28,8 @@ public class Downloader {
         return lista;
     }
 
-    public List<String> tekst(String tekst, String select, String clas, String attribute) throws IOException {
-        URL url = new URL(tekst);
-        Document parse = Jsoup.parse(url, 3000);
-        Elements h2Elements = parse.select(select).attr(clas, attribute);
-        for (Element h2 : h2Elements) {
-            String h2text = h2.text();
-            lista.add(h2text);
-        }
-        return lista;
-    }
-
-    public List<String> tekstOpisu(String input) throws IOException, InterruptedException, HttpStatusException {
-        URL url = new URL(input);
+    public List<String> tekstOpisu(String inputUrl) throws IOException, InterruptedException {
+        URL url = new URL(inputUrl);
         load(url);
         Elements h2Elements = parse.select("p.text");
 
@@ -79,19 +50,15 @@ public class Downloader {
         }
     }
 
-    public void wyciaghref() throws IOException, InterruptedException {
-        URL url = new URL("https://www.wykop.pl/");
+    public void wyciagHref(String inputUrl) throws IOException, InterruptedException {
+        URL url = new URL(inputUrl);
         load(url);
-        Elements h2Elements = parse.select("h2").attr("a", "href");
+        Elements h2Elements = parse.select("a[href]");
+        //System.out.println(h2Elements);
         for (Element h2 : h2Elements) {
             String h2text = h2.select("a").first().attr("href");
             listHref.add(h2text);
             System.out.println(h2text);
         }
-        for (String element : listHref) {
-
-            tekstOpisu(element);
-        }
     }
-
 }
